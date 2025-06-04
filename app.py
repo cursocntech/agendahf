@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import sqlalchemy
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
@@ -23,7 +24,15 @@ class Agendamento(db.Model):
 with app.app_context():
     db.create_all()
 
-
+engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+inspector = sqlalchemy.inspect(engine)
+if not inspector.has_table("usuario"):
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        print("Base de Dados criada")
+else:
+    print("Base de dados já existente")
 @app.template_filter('format_date')
 def format_date(value):
     return datetime.strptime(value, '%Y-%m-%d').strftime('%d/%m/%Y')
