@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendamento de Chromebooks</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-10">
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold mb-4">Agendamento de Chromebooks</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li class="text-red-500">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('book') }}">
+        <label class="block">Nome do Professor:</label>
+        <input type="text" name="professor" class="border p-2 w-full mb-4" required>
+        <label class="block">Turno:</label>
+        <select name="turno" class="border p-2 w-full mb-4">
+            <option value="Matutino">Matutino</option>
+            <option value="Vespertino">Vespertino</option>
+        </select>
+        <label class="block">Gabinete:</label>
+        <select name="gabinete" class="border p-2 w-full mb-4">
+            {% for i in range(1,6) %}
+            <option value="{{ i }}">Gabinete {{ i }}</option>
+            {% endfor %}
+        </select>
+        <label class="block">Data:</label>
+        <input type="date" name="data" class="border p-2 w-full mb-4" required>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded">Agendar</button>
+    </form>
+    <a href="{{ url_for('view_schedule') }}" class="mt-4 inline-block text-blue-600">Ver Agenda</a>
+</div>
+</body>
+</html>

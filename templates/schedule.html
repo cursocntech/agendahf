@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-10">
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold mb-4">Agenda</h1>
+    {% if agendamentos %}
+        <ul class="list-disc ml-5">
+            {% for agendamento in agendamentos %}
+                <li>
+                    {{ agendamento.data|format_date }} - {{ agendamento.professor }} - Gabinete {{ agendamento.gabinete }} - Turno: {{ agendamento.turno }}
+                    <a href="{{ url_for('edit', id=agendamento.id) }}" class="text-yellow-500 ml-2">Editar</a>
+                    <a href="{{ url_for('delete', id=agendamento.id) }}" class="text-red-500 ml-2">Cancelar</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Sem reservas ainda.</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="mt-4 inline-block text-blue-600">Voltar</a>
+</div>
+</body>
+</html>
