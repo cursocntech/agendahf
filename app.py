@@ -1,11 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
+if os.getenv("DATABASE_URL"):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+else:
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agendamentos.db'
 db = SQLAlchemy(app)
+
 
 class Agendamento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,16 +19,20 @@ class Agendamento(db.Model):
     gabinete = db.Column(db.Integer, nullable=False)
     data = db.Column(db.String(10), nullable=False)
 
+
 with app.app_context():
     db.create_all()
+
 
 @app.template_filter('format_date')
 def format_date(value):
     return datetime.strptime(value, '%Y-%m-%d').strftime('%d/%m/%Y')
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/book', methods=['POST'])
 def book():
@@ -49,10 +58,12 @@ def book():
     flash('Reserva efetuada com sucesso!')
     return redirect(url_for('index'))
 
+
 @app.route('/schedule')
 def view_schedule():
     agendamentos = Agendamento.query.order_by(Agendamento.data.desc()).all()
     return render_template('schedule.html', agendamentos=agendamentos)
+
 
 @app.route('/delete/<int:id>')
 def delete(id):
@@ -61,6 +72,7 @@ def delete(id):
     db.session.commit()
     flash('Reserva cancelada com sucesso!')
     return redirect(url_for('view_schedule'))
+
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
@@ -85,8 +97,9 @@ def edit(id):
         db.session.commit()
         flash('Reserva atualizada com sucesso!')
         return redirect(url_for('view_schedule'))
-    
+
     return render_template('edit.html', agendamento=agendamento)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
