@@ -23,6 +23,16 @@ class Agendamento(db.Model):
     gabinete = db.Column(db.Integer, nullable=False)
     data = db.Column(db.String(10), nullable=False)
 
+engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+inspector = sqlalchemy.inspect(engine)
+if not inspector.has_table("usuario"):
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        print("Base de Dados criada")
+else:
+    print("Base de dados já existente")
+
 @app.template_filter('format_date')
 def format_date(value):
     return datetime.strptime(value, '%Y-%m-%d').strftime('%d/%m/%Y')
@@ -99,15 +109,5 @@ def edit(id):
 
     return render_template('edit.html', agendamento=agendamento)
     
-engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-inspector = sqlalchemy.inspect(engine)
-if not inspector.has_table("usuario"):
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        print("Base de Dados criada")
-else:
-    print("Base de dados já existente")
-
 if __name__ == '__main__':
     app.run(debug=True)
