@@ -16,16 +16,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agendamentos.db'
 with app.app_context():
     db.create_all()
 
-engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-inspector = sqlalchemy.inspect(engine)
-if not inspector.has_table("usuario"):
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        print("Base de Dados criada")
-else:
-    print("Base de dados já existente")
-
 class Agendamento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     professor = db.Column(db.String(100), nullable=False)
@@ -102,13 +92,22 @@ def edit(id):
         if conflito:
             flash('Já existe um agendamento nesse horário para esse gabinete.')
             return redirect(url_for('edit', id=id))
-
+            
         db.session.commit()
         flash('Reserva atualizada com sucesso!')
         return redirect(url_for('view_schedule'))
 
     return render_template('edit.html', agendamento=agendamento)
-
+    
+engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+inspector = sqlalchemy.inspect(engine)
+if not inspector.has_table("usuario"):
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        print("Base de Dados criada")
+else:
+    print("Base de dados já existente")
 
 if __name__ == '__main__':
     app.run(debug=True)
