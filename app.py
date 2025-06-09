@@ -6,12 +6,12 @@ import sqlalchemy
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agendamentos.db'
+db = SQLAlchemy(app)
 if os.getenv("DATABASE_URL"):
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 else:
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agendamentos.db'
-db = SQLAlchemy(app)
-
 
 class Agendamento(db.Model):
     id = db.Column(db.Integer, primary_key=True)
