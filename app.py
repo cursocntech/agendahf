@@ -13,14 +13,6 @@ if os.getenv("DATABASE_URL"):
 else:
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///agendamentos.db'
 
-class Agendamento(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    professor = db.Column(db.String(100), nullable=False)
-    turno = db.Column(db.String(20), nullable=False)
-    gabinete = db.Column(db.Integer, nullable=False)
-    data = db.Column(db.String(10), nullable=False)
-
-
 with app.app_context():
     db.create_all()
 
@@ -33,6 +25,14 @@ if not inspector.has_table("usuario"):
         print("Base de Dados criada")
 else:
     print("Base de dados já existente")
+
+class Agendamento(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    professor = db.Column(db.String(100), nullable=False)
+    turno = db.Column(db.String(20), nullable=False)
+    gabinete = db.Column(db.Integer, nullable=False)
+    data = db.Column(db.String(10), nullable=False)
+
 @app.template_filter('format_date')
 def format_date(value):
     return datetime.strptime(value, '%Y-%m-%d').strftime('%d/%m/%Y')
